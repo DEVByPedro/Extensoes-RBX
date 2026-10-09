@@ -1,0 +1,27 @@
+{
+	"manifest_version": 3,
+	"name": "Busca de Protocolo | RBXsoft",
+	"version": "1.1",
+	"description": "Busca de Protocolo rápida | By Pedro Couto",
+	"permissions": [
+		"scripting"
+	],
+	"host_permissions": [
+		"https://central.rbxsoft.com/routerbox/*"
+	],
+	"background": {
+		"service_worker": "background.js"
+	},
+	"content_scripts": [
+		{
+			"matches": [
+				"https://central.rbxsoft.com/routerbox/*"
+			],
+			"js": [
+				"content.js"
+			],
+			"all_frames": true,
+			"run_at": "document_idle"
+		}
+	]
+}

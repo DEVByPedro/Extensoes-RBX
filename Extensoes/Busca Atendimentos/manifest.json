@@ -1,0 +1,29 @@
+{
+	"manifest_version": 3,
+	"name": "Busca Protocolos | RBXsoft",
+	"version": "1.0",
+	"description": "Preenche o protocolo na tela de relatórios do meu sistema | By Pedro Couto",
+	"permissions": [
+		"activeTab",
+		"scripting",
+		"storage"
+	],
+	"host_permissions": [
+		"https://central.rbxsoft.com/routerbox/*"
+	],
+	"action": {
+		"default_popup": "index.html",
+		"default_title": "Buscar protocolo"
+	},
+	"content_scripts": [
+		{
+			"matches": [
+				"https://central.rbxsoft.com/routerbox/*"
+			],
+			"js": [
+				"content.js"
+			],
+			"run_at": "document_idle"
+		}
+	]
+}
