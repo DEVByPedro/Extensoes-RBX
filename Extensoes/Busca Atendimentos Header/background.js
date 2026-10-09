@@ -5,14 +5,13 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
 		.then(sendResponse)
 		.catch((e) => sendResponse({ ok: false, erro: String(e) }));
 
-	return true; // resposta assíncrona
+	return true;
 });
 
 async function buscar(tabId, protocolo) {
 	const target = { tabId, allFrames: true };
 	const esperar = (ms) => new Promise((r) => setTimeout(r, ms));
 
-	// roda func até algum frame devolver { ok: true }
 	const tentar = async (func, args = [], limiteMs = 8000) => {
 		const ini = Date.now();
 		while (Date.now() - ini < limiteMs) {
@@ -21,14 +20,12 @@ async function buscar(tabId, protocolo) {
 				const ok = res.find((r) => r.result?.ok);
 				if (ok) return ok.result;
 			} catch (e) {
-				// frame ainda carregando
 			}
 			await esperar(150);
 		}
 		return null;
 	};
 
-	// ETAPA 1: Empresa > Relatórios
 	await chrome.scripting.executeScript({
 		target,
 		func: async () => {
@@ -54,7 +51,6 @@ async function buscar(tabId, protocolo) {
 
 	await esperar(1500);
 
-	// ETAPA 2: Atendimentos > Geral
 	await chrome.scripting.executeScript({
 		target,
 		func: async () => {
@@ -84,8 +80,7 @@ async function buscar(tabId, protocolo) {
 		},
 	});
 
-	// ETAPA 3: preencher o protocolo, esperar o autocomplete retornar e dar Enter
-	const LIMITE_AUTOCOMPLETE = 6000; // ms: quanto esperar o autocomplete retornar algo
+	const LIMITE_AUTOCOMPLETE = 6000;
 
 	const etapa3 = await tentar(
 		async (valor, limite) => {
@@ -132,7 +127,6 @@ async function buscar(tabId, protocolo) {
 
 			window.__antesDoReload = true;
 
-			// destaca o primeiro item da lista (se veio algum) e dá Enter
 			if (itens.length) {
 				visivel.dispatchEvent(tecla('keydown', 'ArrowDown', 40));
 				await esperar(150);
@@ -147,9 +141,7 @@ async function buscar(tabId, protocolo) {
 		[protocolo, LIMITE_AUTOCOMPLETE]
 	);
 	if (!etapa3) return { ok: false, erro: 'campo de protocolo não encontrado' };
-	console.log('autocomplete retornou itens:', etapa3.itens);
 
-	// ETAPA 4: Detalhar, assim que o relatório recarregar
 	const clicarDetalhar = (forcar) => {
 		if (!forcar && window.__antesDoReload) return null;
 		const botao =

@@ -1,6 +1,11 @@
 (() => {
 	const CSS = `
-		:host { display: inline-flex; align-items: center; gap: 8px; margin-right: 14px; }
+		:host {
+			display: inline-flex; align-items: center; gap: 8px;
+			padding: 6px 8px; border-radius: 8px;
+			background: #15151f;
+			box-shadow: 0 2px 10px rgba(0,0,0,.45);
+		}
 		* { box-sizing: border-box; font-family: 'Google Sans', 'Segoe UI', sans-serif; }
 
 		input {
@@ -83,12 +88,12 @@
 
 	function posicionar(host) {
 		const header = document.querySelector('header.header') || document.querySelector('header');
-		const nome = document.querySelector('.company_name');
 		const h = header?.getBoundingClientRect();
-		const n = nome?.getBoundingClientRect();
+		const alt = host.offsetHeight || 48;
 
-		host.style.top = (h ? h.top + (h.height - 36) / 2 : 17) + 'px'; // 36 = altura do botão
-		host.style.left = (n && n.right > 0 ? n.right + 24 : 470) + 'px';
+		host.style.top = (h ? h.top + (h.height - alt) / 2 : 11) + 'px';
+		host.style.left = 'auto';
+		host.style.right = '400px';
 	}
 
 	const CSS_HEADER = `
@@ -145,9 +150,18 @@
 		@media (prefers-reduced-motion: reduce) {
 			.extp-orb { animation: none; opacity: 0.4; }
 		}
+
+		header,
+		#header_will,
+		.header_will > * {
+			background: #15151f !important;
+			background-color: #15151f !important;
+			background-image: none !important;
+		}
+
 	`;
 
-	const CORES_LUZ = ['120, 100, 255', '80, 160, 255', '255, 100, 180']; // roxo, azul, rosa
+	const CORES_LUZ = ['120, 100, 255', '80, 160, 255', '255, 100, 180'];
 	const QTD_LUZES = 6;
 
 	function criarLuzes(header) {
@@ -155,7 +169,6 @@
 
 		const rand = (a, b) => a + Math.random() * (b - a);
 
-		// sorteia nova posição e deslocamento (chamado a cada novo ciclo)
 		const reposicionar = (el) => {
 			el.style.setProperty('--x', rand(0, 100) + '%');
 			el.style.setProperty('--y', rand(25, 75) + '%');
@@ -173,10 +186,9 @@
 			orb.style.setProperty('--w', rand(220, 340) + 'px');
 			orb.style.setProperty('--h', rand(90, 140) + 'px');
 			orb.style.animationDuration = rand(7, 12) + 's';
-			orb.style.animationDelay = -rand(0, 12) + 's'; // começam em pontos diferentes do ciclo
+			orb.style.animationDelay = -rand(0, 12) + 's';
 			reposicionar(orb);
 
-			// o novo ciclo começa com opacidade 0, então a troca de lugar não aparece
 			orb.addEventListener('animationiteration', () => reposicionar(orb));
 
 			wrap.append(orb);
@@ -241,7 +253,6 @@
 		});
 	}
 
-	// cria o botão e reposiciona a cada segundo (acompanha resize e reflow)
 	setInterval(() => {
 		if (document.querySelector('header.header')) aplicarEstiloHeader();
 		montar();
@@ -249,6 +260,5 @@
 		if (host) posicionar(host);
 	}, 1000);
 
-	// só o frame que tem o header cria o botão; confere de tempos em tempos
 	setInterval(montar, 1000);
 })();
